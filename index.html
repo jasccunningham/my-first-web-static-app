@@ -1,1 +1,86 @@
-<canvas id="myChart"></canvas>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>China Economic Flow Map 2025</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { font-family: sans-serif; }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 6px;
+            font-size: 12px;
+            background: lightsteelblue;
+            border: 1px solid #333;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>China Interprovincial Economic Flows (2025)</h2>
+    <svg width="960" height="600"></svg>
+    <script>
+        const width = 960, height = 600;
+        const svg = d3.select("svg");
+        const projection = d3.geoMercator().center([104, 35]).scale(700).translate([width / 2, height / 2]);
+        const path = d3.geoPath().projection(projection);
+
+        const tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
+
+        const cities = {
+            "Beijing": [116.4074, 39.9042],
+            "Shanghai": [121.4737, 31.2304],
+            "Guangdong": [113.2665, 23.1322],
+            "Zhejiang": [120.1536, 30.2656],
+            "Jiangsu": [118.7633, 32.0617],
+            "Sichuan": [104.0665, 30.5728],
+            "Chongqing": [106.5516, 29.5630],
+            "Hubei": [114.3054, 30.5931]
+        };
+
+        const flows = [{"source": "Beijing", "target": "Shanghai", "value": 120}, {"source": "Shanghai", "target": "Guangdong", "value": 180}, {"source": "Guangdong", "target": "Zhejiang", "value": 95}, {"source": "Zhejiang", "target": "Jiangsu", "value": 110}, {"source": "Jiangsu", "target": "Beijing", "value": 85}, {"source": "Sichuan", "target": "Guangdong", "value": 70}, {"source": "Chongqing", "target": "Shanghai", "value": 60}, {"source": "Hubei", "target": "Beijing", "value": 75}];
+
+        // Draw flow lines
+        flows.forEach(flow => {
+            const [x1, y1] = projection(cities[flow.source]);
+            const [x2, y2] = projection(cities[flow.target]);
+            svg.append("line")
+                .attr("x1", x1)
+                .attr("y1", y1)
+                .attr("x2", x2)
+                .attr("y2", y2)
+                .attr("stroke", "steelblue")
+                .attr("stroke-width", Math.sqrt(flow.value) / 2)
+                .attr("opacity", 0.7)
+                .on("mouseover", function(event) {
+                    tooltip.transition().duration(200).style("opacity", .9);
+                    tooltip.html(`${flow.source} → ${flow.target}<br/>Flow: ${flow.value}B`)
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function() {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
+        });
+
+        // Draw city points
+        Object.entries(cities).forEach(([name, coords]) => {
+            const [x, y] = projection(coords);
+            svg.append("circle")
+                .attr("cx", x)
+                .attr("cy", y)
+                .attr("r", 4)
+                .attr("fill", "red");
+            svg.append("text")
+                .attr("x", x + 5)
+                .attr("y", y - 5)
+                .text(name)
+                .style("font-size", "10px");
+        });
+    </script>
+</body>
+</html>
+
