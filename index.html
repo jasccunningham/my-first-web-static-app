@@ -2,41 +2,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pie Chart Example</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="utf-8">
+    <title>China Economic Flow Map</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 6px;
+            font: 12px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
-    <h2>Sample Pie Chart</h2>
-    <canvas id="myPieChart" width="400" height="400"></canvas>
+    <svg width="800" height="600"></svg>
     <script>
-        const ctx = document.getElementById('myPieChart').getContext('2d');
-        const myPieChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
-                datasets: [{
-                    label: 'Sample Data',
-                    data: [12, 19, 3, 5, 2],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: false
-            }
+        const width = 800, height = 600;
+        const svg = d3.select("svg");
+        const projection = d3.geoMercator().center([104, 35]).scale(600).translate([width / 2, height / 2]);
+        const path = d3.geoPath().projection(projection);
+        const tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
+
+        const geoData = {"type": "FeatureCollection", "features": [{"type": "Feature", "properties": {"name": "Beijing"}, "geometry": {"type": "Point", "coordinates": [116.4074, 39.9042]}}, {"type": "Feature", "properties": {"name": "Shanghai"}, "geometry": {"type": "Point", "coordinates": [121.4737, 31.2304]}}, {"type": "Feature", "properties": {"name": "Guangzhou"}, "geometry": {"type": "Point", "coordinates": [113.2644, 23.1291]}}]};
+        const flows = [{"source": "Beijing", "target": "Shanghai", "value": 100}, {"source": "Shanghai", "target": "Guangzhou", "value": 80}, {"source": "Guangzhou", "target": "Beijing", "value": 60}];
+
+        const cityCoords = {};
+        geoData.features.forEach(d => {
+            const [x, y] = projection(d.geometry.coordinates);
+            cityCoords[d.properties.name] = [x, y];
+            svg.append("circle")
+                .attr("cx", x)
+                .attr("cy", y)
+                .attr("r", 5)
+                .attr("fill", "red");
+
+            svg.append("text")
+                .attr("x", x + 6)
+                .attr("y", y)
+                .text(d.properties.name)
+                .style("font-size", "12px");
+        });
+
+        flows.forEach(flow => {
+            const [x1, y1] = cityCoords[flow.source];
+            const [x2, y2] = cityCoords[flow.target];
+            svg.append("line")
+                .attr("x1", x1)
+                .attr("y1", y1)
+                .attr("x2", x2)
+                .attr("y2", y2)
+                .attr("stroke", "blue")
+                .attr("stroke-width", flow.value / 20)
+                .on("mouseover", function(event) {
+                    tooltip.transition().duration(200).style("opacity", .9);
+                    tooltip.html(`${flow.source} → ${flow.target}<br/>Flow: ${flow.value}`)
+                        .style("left", (event.pageX + 5) + "px")
+                        .style("top", (event.pageY - 28) + "px");
+                })
+                .on("mouseout", function() {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
         });
     </script>
 </body>
