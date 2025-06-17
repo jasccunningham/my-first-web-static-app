@@ -1,22 +1,15 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f9f9f9;
 }
 
 #chart {
-    width: 700px;
-    height: 700px;
-    margin: auto;
+  width: 700px;
+  height: 700px;
+  margin: auto;
 }
 
-.tooltip {
-    position: absolute;
-    text-align: center;
-    padding: 6px;
-    font-size: 12px;
-    background: lightsteelblue;
-    border: 0px;
-    border-radius: 4px;
-    pointer-events: none;
+h2 {
+  margin-top: 20px;
 }
