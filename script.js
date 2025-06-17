@@ -49,7 +49,7 @@ svg.selectAll("path")
   .join("path")
   .attr("display", d => d.depth ? null : "none")
   .attr("d", arc)
-  .style("stroke", "#fff")
+  .style("stroke", "#f0f")
   .style("fill", d => {
     const scale = d3.scaleOrdinal(d3.schemeCategory10);
     return scale((d.children ? d : d.parent).data.name);
