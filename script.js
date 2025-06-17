@@ -7,8 +7,8 @@ const data = {
     {
       name: "Southeast Asia",
       children: [
-        { name: "Vietnam", value: 100 },
-        { name: "Thailand", value: 80 },
+        { name: "Vietnam", value: 200 },
+        { name: "Thailand", value: 20 },
         { name: "Malaysia", value: 60 },
         { name: "Indonesia", value: 90 }
       ]
