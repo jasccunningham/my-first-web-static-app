@@ -26,7 +26,7 @@ const partition = data => {
     .sum(d => d.value)
     .sort((a, b) => b.value - a.value);
   return d3.partition()
-    .size([2 * Math.PI, radius])(root);
+    .size([1.5 * Math.PI, radius])(root);
 };
 
 const root = partition(data);
