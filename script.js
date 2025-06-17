@@ -1,72 +1,62 @@
 const width = 700;
 const radius = width / 2;
 
-const partition = data => {
-    const root = d3.hierarchy(data)
-        .sum(d => d.value)
-        .sort((a, b) => b.value - a.value);
-    return d3.partition()
-        .size([2 * Math.PI, root.height + 1])
-        (root);
+const data = {
+  name: "China Trade",
+  children: [
+    {
+      name: "Southeast Asia",
+      children: [
+        { name: "Vietnam", value: 100 },
+        { name: "Thailand", value: 80 },
+        { name: "Malaysia", value: 60 },
+        { name: "Indonesia", value: 90 }
+      ]
+    },
+    {
+      name: "Africa",
+      children: [
+        { name: "Nigeria", value: 70 },
+        { name: "Kenya", value: 50 },
+        { name: "South Africa", value: 85 },
+        { name: "Ethiopia", value: 40 }
+      ]
+    }
+  ]
 };
 
-const arc = d3.arc()
-    .startAngle(d => d.x0)
-    .endAngle(d => d.x1)
-    .innerRadius(d => d.y0 * radius / 5)
-    .outerRadius(d => d.y1 * radius / 5 - 1);
-
-const tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
-
-const svg = d3.select("#chart").append("svg")
-    .attr("width", width)
-    .attr("height", width)
-    .append("g")
-    .attr("transform", `translate(${width / 2},${width / 2})`);
-
-const data = {
-    name: "root",
-    children: [
-        {
-            name: "Group A",
-            children: [
-                { name: "A1", value: 100 },
-                { name: "A2", value: 300 }
-            ]
-        },
-        {
-            name: "Group B",
-            children: [
-                { name: "B1", value: 200 },
-                {
-                    name: "B2",
-                    children: [
-                        { name: "B2.1", value: 150 },
-                        { name: "B2.2", value: 50 }
-                    ]
-                }
-            ]
-        }
-    ]
+const partition = data => {
+  const root = d3.hierarchy(data)
+    .sum(d => d.value)
+    .sort((a, b) => b.value - a.value);
+  return d3.partition()
+    .size([2 * Math.PI, radius])(root);
 };
 
 const root = partition(data);
 
-root.each(d => d.current = d);
+const arc = d3.arc()
+  .startAngle(d => d.x0)
+  .endAngle(d => d.x1)
+  .innerRadius(d => d.y0)
+  .outerRadius(d => d.y1);
+
+const svg = d3.select("#chart")
+  .append("svg")
+  .attr("width", width)
+  .attr("height", width)
+  .append("g")
+  .attr("transform", `translate(${radius},${radius})`);
 
 svg.selectAll("path")
-    .data(root.descendants().slice(1))
-    .join("path")
-    .attr("fill", d => d3.interpolateCool(d.depth / 4))
-    .attr("d", d => arc(d.current))
-    .on("mouseover", function(event, d) {
-        tooltip.transition().duration(200).style("opacity", .9);
-        tooltip.html(d.ancestors().map(d => d.data.name).reverse().join(" → ") + "<br/>" + d.value)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 28) + "px");
-    })
-    .on("mouseout", function() {
-        tooltip.transition().duration(500).style("opacity", 0);
-    });
+  .data(root.descendants())
+  .join("path")
+  .attr("display", d => d.depth ? null : "none")
+  .attr("d", arc)
+  .style("stroke", "#fff")
+  .style("fill", d => {
+    const scale = d3.scaleOrdinal(d3.schemeCategory10);
+    return scale((d.children ? d : d.parent).data.name);
+  })
+  .append("title")
+  .text(d => `${d.data.name}\n${d.value}`);
