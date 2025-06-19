@@ -1,646 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Albia: A D&D Campaign Companion</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-        }
-        .font-medieval {
-            font-family: 'MedievalSharp', cursive;
-        }
-        .bg-parchment {
-            background-color: #fdf5e6;
-            color: #3a2a1a;
-            border: 2px solid #c8b89a;
-        }
-        .tab-button {
-            transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
-        }
-        .tab-button.active {
-            border-bottom-color: #e53e3e;
-            color: #fdf5e6;
-        }
-        .scroll-container::-webkit-scrollbar {
-            width: 8px;
-        }
-        .scroll-container::-webkit-scrollbar-track {
-            background: #2d3748;
-        }
-        .scroll-container::-webkit-scrollbar-thumb {
-            background-color: #718096;
-            border-radius: 4px;
-        }
-        .prose h1, .prose h2, .prose h3 {
-            font-family: 'MedievalSharp', cursive;
-            color: #a0522d;
-        }
-        .modal-backdrop {
-            background-color: rgba(0,0,0,0.7);
-        }
-        .map-dot {
-            transition: all 0.2s ease-in-out;
-        }
-        .map-dot:hover {
-            transform: scale(1.8);
-            filter: drop-shadow(0 0 5px #fff);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D&D England 15th Century</title>
+  <style>
+    body {
+      font-family: 'Garamond', serif;
+      background: #f5f1e1;
+      color: #2f2f2f;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #5b3924;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+    .container {
+      padding: 2rem;
+      max-width: 900px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #3a1f0a;
+    }
+    button {
+      background: #5b3924;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    button:hover {
+      background: #8a5d3b;
+    }
+  </style>
 </head>
-<body class="overflow-hidden h-screen">
-
-    <div id="app" class="flex flex-col h-full bg-cover bg-center" style="background-image: url('https://placehold.co/1920x1080/1a1a1a/2c2c2c?text=Tavern+Background');">
-
-        <!-- Main Header -->
-        <header class="bg-gray-900 bg-opacity-80 text-white p-4 shadow-lg flex justify-between items-center">
-            <h1 class="text-3xl font-medieval">Albia Campaign Companion</h1>
-            <div id="auth-status" class="text-sm">
-                <p>Connecting...</p>
-                <div id="party-info" class="hidden">
-                    <p>Party ID: <span id="party-id-display" class="font-mono bg-gray-700 px-2 py-1 rounded"></span> <button id="copy-party-id" class="ml-2 text-gray-300 hover:text-white"><i data-lucide="clipboard"></i></button></p>
-                    <p>User ID: <span id="user-id-display" class="font-mono text-xs"></span></p>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="flex-1 flex overflow-hidden">
-            <!-- Navigation Tabs -->
-            <nav class="bg-gray-800 bg-opacity-70 p-4">
-                <ul class="space-y-4">
-                    <li><button data-tab="map" class="tab-button active w-full text-left flex items-center space-x-2"><i data-lucide="map"></i><span>Map</span></button></li>
-                    <li><button data-tab="quests" class="tab-button w-full text-left flex items-center space-x-2"><i data-lucide="scroll"></i><span>Quests</span></button></li>
-                    <li><button data-tab="characters" class="tab-button w-full text-left flex items-center space-x-2"><i data-lucide="users"></i><span>Characters</span></button></li>
-                    <li><button data-tab="lore" class="tab-button w-full text-left flex items-center space-x-2"><i data-lucide="book-open"></i><span>Lore</span></button></li>
-                    <li><button data-tab="timeline" class="tab-button w-full text-left flex items-center space-x-2"><i data-lucide="hourglass"></i><span>Timeline</span></button></li>
-                </ul>
-            </nav>
-
-            <!-- Tab Content -->
-            <div class="flex-1 p-6 bg-black bg-opacity-50 overflow-y-auto scroll-container">
-                <!-- Map Tab -->
-                <div id="map-content" class="tab-content">
-                    <h2 class="text-2xl font-medieval mb-4">The Realm of Albia</h2>
-                    <div class="relative w-full max-w-4xl mx-auto">
-                        <img src="https://placehold.co/1200x900/d1c7ac/a0522d?text=Map+of+Albia" alt="Map of Albia" class="w-full rounded-lg shadow-xl border-4 border-amber-800">
-                        <!-- Map markers will be injected here -->
-                        <div id="map-markers"></div>
-                    </div>
-                </div>
-
-                <!-- Quests Tab -->
-                <div id="quests-content" class="tab-content hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-medieval">Quest Log</h2>
-                        <button id="add-quest-btn" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg flex items-center"><i data-lucide="plus-circle" class="mr-2"></i> New Quest</button>
-                    </div>
-                    <div id="quest-list" class="space-y-4">
-                        <!-- Quests will be dynamically added here -->
-                    </div>
-                </div>
-
-                <!-- Characters Tab -->
-                <div id="characters-content" class="tab-content hidden">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-medieval">Player Characters</h2>
-                         <button id="add-char-btn" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg flex items-center"><i data-lucide="user-plus" class="mr-2"></i> Add Character</button>
-                    </div>
-                    <div id="character-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Character cards will be dynamically added here -->
-                    </div>
-                </div>
-
-                <!-- Lore Tab -->
-                <div id="lore-content" class="tab-content hidden">
-                    <h2 class="text-2xl font-medieval mb-4">Compendium of Albia</h2>
-                    <div id="lore-list" class="space-y-4">
-                        <!-- Lore articles will be dynamically added here -->
-                    </div>
-                </div>
-
-                <!-- Timeline Tab -->
-                <div id="timeline-content" class="tab-content hidden">
-                    <h2 class="text-2xl font-medieval mb-4">A History of Turmoil</h2>
-                    <div id="timeline-list" class="relative border-l-4 border-gray-600 pl-8">
-                        <!-- Timeline events will be dynamically added here -->
-                    </div>
-                </div>
-            </div>
-        </main>
-        
-        <!-- Modal for adding/editing Quests -->
-        <div id="quest-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
-            <div class="bg-parchment p-8 rounded-lg shadow-2xl w-full max-w-md">
-                <h3 id="quest-modal-title" class="text-2xl font-medieval mb-4">New Quest</h3>
-                <form id="quest-form">
-                    <input type="hidden" id="quest-id">
-                    <div class="mb-4">
-                        <label for="quest-title" class="block text-amber-900 font-bold mb-2">Title</label>
-                        <input type="text" id="quest-title" class="w-full p-2 rounded bg-white border border-amber-800" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="quest-description" class="block text-amber-900 font-bold mb-2">Description</p>
-                        <textarea id="quest-description" rows="4" class="w-full p-2 rounded bg-white border border-amber-800" required></textarea>
-                    </div>
-                     <div class="mb-4">
-                        <label for="quest-status" class="block text-amber-900 font-bold mb-2">Status</p>
-                        <select id="quest-status" class="w-full p-2 rounded bg-white border border-amber-800">
-                            <option value="active">Active</option>
-                            <option value="completed">Completed</option>
-                            <option value="failed">Failed</option>
-                        </select>
-                    </div>
-                    <div class="flex justify-end space-x-4">
-                        <button type="button" id="cancel-quest" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">Cancel</button>
-                        <button type="submit" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Modal for adding/editing Characters -->
-        <div id="char-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
-            <div class="bg-parchment p-8 rounded-lg shadow-2xl w-full max-w-md">
-                <h3 id="char-modal-title" class="text-2xl font-medieval mb-4">Add Character</h3>
-                <form id="char-form">
-                    <input type="hidden" id="char-id">
-                    <div class="mb-4">
-                        <label for="char-name" class="block text-amber-900 font-bold mb-2">Character Name</label>
-                        <input type="text" id="char-name" class="w-full p-2 rounded bg-white border border-amber-800" required>
-                    </div>
-                     <div class="mb-4">
-                        <label for="char-player" class="block text-amber-900 font-bold mb-2">Player Name</label>
-                        <input type="text" id="char-player" class="w-full p-2 rounded bg-white border border-amber-800">
-                    </div>
-                    <div class="mb-4">
-                        <label for="char-class" class="block text-amber-900 font-bold mb-2">Class & Level</p>
-                        <input type="text" id="char-class" class="w-full p-2 rounded bg-white border border-amber-800">
-                    </div>
-                     <div class="mb-4">
-                        <label for="char-notes" class="block text-amber-900 font-bold mb-2">Notes</p>
-                        <textarea id="char-notes" rows="5" class="w-full p-2 rounded bg-white border border-amber-800"></textarea>
-                    </div>
-                    <div class="flex justify-end space-x-4">
-                        <button type="button" id="cancel-char" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">Cancel</button>
-                        <button type="submit" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Lore Detail Modal -->
-        <div id="lore-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center modal-backdrop">
-             <div class="bg-parchment p-8 rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
-                <div class="flex justify-between items-center mb-4">
-                     <h3 id="lore-detail-title" class="text-3xl font-medieval text-amber-900"></h3>
-                     <button id="close-lore-detail" class="text-amber-900 hover:text-red-700"><i data-lucide="x-circle" class="w-8 h-8"></i></button>
-                </div>
-                <div id="lore-detail-content" class="prose max-w-none overflow-y-auto scroll-container flex-1">
-                    <!-- Lore content goes here -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Party ID Modal -->
-        <div id="party-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-backdrop">
-            <div class="bg-parchment p-8 rounded-lg shadow-2xl w-full max-w-md text-center">
-                <h3 class="text-2xl font-medieval mb-4">Join or Create a Party</h3>
-                <p class="mb-4 text-amber-900">To begin your adventure, create a new party or enter the ID of an existing one.</p>
-                <button id="create-party-btn" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-6 rounded-lg text-lg mb-4 w-full">Create New Party</button>
-                <p class="text-amber-800 font-bold my-2">OR</p>
-                <form id="join-party-form" class="flex items-center space-x-2">
-                    <input type="text" id="join-party-id" placeholder="Enter Party ID..." class="w-full p-2 rounded bg-white border border-amber-800 flex-1">
-                    <button type="submit" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Join</button>
-                </form>
-            </div>
-        </div>
-        
+<body>
+  <header>
+    <h1>Dungeons & Dragons: England 1450</h1>
+    <p>Create a character and begin your medieval journey</p>
+  </header>
+  <div class="container">
+    <div class="card">
+      <h2>Generate Character</h2>
+      <button onclick="generateCharacter()">Generate</button>
+      <p id="character"></p>
     </div>
 
-    <script type="module">
-        // Firebase Imports
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <div class="card">
+      <h2>Map of the Realm</h2>
+      <p>A foggy, fractured England post-Hundred Years' War, teeming with rival houses and ancient myths.</p>
+    </div>
 
-        // --- GLOBAL STATE & CONFIG ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'albia-dnd-dev';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "your-dev-api-key", authDomain: "your-dev-project.firebaseapp.com", projectId: "your-dev-project-id" };
+    <div class="card">
+      <h2>Historical Factions</h2>
+      <ul>
+        <li>House Lancaster (Red Rose)</li>
+        <li>House York (White Rose)</li>
+        <li>Witch Covens of the Fens</li>
+        <li>Order of the Black Chalice</li>
+      </ul>
+    </div>
+  </div>
 
-        let db, auth, userId, partyId;
-        let unsubscribeQuests = () => {};
-        let unsubscribeCharacters = () => {};
+  <script>
+    const names = ['Edric', 'Rowena', 'Thomasin', 'Geoffrey', 'Isolde', 'Aelric'];
+    const classes = ['Knight', 'Alchemist', 'Witch Hunter', 'Friar', 'Bowman', 'Spy'];
+    const traits = ['Pious', 'Cursed', 'Haunted by war', 'Seeks vengeance', 'Secretly royal', 'Devoted to science'];
 
-        // --- DATA ---
-        const mapLocations = [
-            { id: 'caerlund', name: 'Caerlund', x: '50%', y: '55%', description: 'The grand capital of Albia, seat of House Llewellyn. A bustling city of soaring spires and shadowed alleys, where political intrigue is the lifeblood.' },
-            { id: 'valois_keep', name: "Valois Keep", x: '60%', y: '25%', description: "The formidable northern fortress of House Valois. Carved into the mountainside, it is a symbol of their strength and ambition." },
-            { id: 'silverwood', name: 'The Silverwood', x: '25%', y: '40%', description: "An ancient, mist-shrouded forest, home to reclusive Wood Elves. Said to hold secrets older than the kingdom itself." },
-            { id: 'iron_hills', name: 'Iron Hills', x: '30%', y: '75%', description: 'The mountainous domain of the dwarves of Clan Ironhand. Rich in ore and fiercely defended.' },
-            { id: 'redwater_ford', name: 'Redwater Ford', x: '55%', y: '45%', description: 'A strategic river crossing that has seen countless battles. The waters are said to run red with blood.' },
-        ];
+    function generateCharacter() {
+      const name = names[Math.floor(Math.random() * names.length)];
+      const charClass = classes[Math.floor(Math.random() * classes.length)];
+      const trait = traits[Math.floor(Math.random() * traits.length)];
 
-        const loreData = [
-            { id: 'houses', title: 'The Great Houses', content: `<h2>House Llewellyn (The White Dragon)</h2><p>The current ruling family, their claim to the Tarnished Crown is based on three generations of rule and ancient pacts. Their power is centered in the more civilized south.</p><h2>House Valois (The Red Griffin)</h2><p>Ambitious and charismatic, the Valois of the northern marches claim a more direct, and therefore stronger, bloodline to King Valerius the Great. They are masters of war and propaganda.</p>` },
-            { id: 'faith', title: 'The Faith of the Seven Heavens', content: `<h2>The Dominant Religion</h2><p>The Faith is the official religion of Albia, a powerful institution with its own lands, armies, and political agenda. The Archbishop in Caerlund is a kingmaker, and his support is crucial in the coming war. While officially neutral, its clergy are as prone to corruption and ambition as any noble.</p>` },
-            { id: 'races', title: 'Peoples of Albia', content: `<h2>Humans</h2><p>The most numerous and fractious people, their ambitions drive the great conflicts of the age.</p><h2>Elves</h2><p>High Elves are rare sights, serving as scholars or mages in noble courts. Wood Elves remain secluded in the Silverwood, wary of human wars.</p><h2>Dwarves</h2><p>The clans of the Iron Hills are pragmatic smiths and warriors, trading their wares to any who can afford them, regardless of allegiance.</p><h2>Halflings & Others</h2><p>Halflings live in pastoral communities, trying to stay out of the 'big folk\'s' way. Half-orcs and other mixed-blood individuals live on the fringes of society, often finding work as mercenaries.</p>` }
-        ];
-        
-        const timelineData = [
-            { year: '200 years ago', event: 'The Unification', description: 'King Valerius the Great unites the petty kingdoms, forging the realm of Albia and the Tarnished Crown.' },
-            { year: '150 years ago', event: "The Dragon's Pact", description: 'House Llewellyn secures their dynasty by forging an alliance with the ancient silver dragons of the northern peaks.' },
-            { year: '40 years ago', event: 'The Blackfire Rebellion', description: 'A massive peasant uprising is brutally crushed by the combined might of Houses Llewellyn and Valois, a brief and bloody alliance.' },
-            { year: 'Present Day', event: "The King's Malady", description: "King Theron IV Llewellyn suffers from a debilitating madness, creating a power vacuum that Lord Corvus Valois is all too eager to fill. The War of the Cousins begins." },
-        ];
-
-
-        // --- UI INITIALIZATION & EVENT LISTENERS ---
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            initializeAppUI();
-            setupEventListeners();
-            initFirebase();
-        });
-
-        function initializeAppUI() {
-            renderMapMarkers();
-            renderLore();
-            renderTimeline();
-        }
-
-        function setupEventListeners() {
-            // Tab navigation
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.addEventListener('click', () => {
-                    const tab = button.dataset.tab;
-                    document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-                    document.getElementById(`${tab}-content`).classList.remove('hidden');
-
-                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                });
-            });
-
-            // Quest Modal
-            document.getElementById('add-quest-btn').addEventListener('click', showQuestModal);
-            document.getElementById('cancel-quest').addEventListener('click', hideQuestModal);
-            document.getElementById('quest-form').addEventListener('submit', handleQuestFormSubmit);
-
-            // Character Modal
-            document.getElementById('add-char-btn').addEventListener('click', showCharModal);
-            document.getElementById('cancel-char').addEventListener('click', hideCharModal);
-            document.getElementById('char-form').addEventListener('submit', handleCharFormSubmit);
-
-            // Lore Modal
-            document.getElementById('close-lore-detail').addEventListener('click', () => document.getElementById('lore-detail-modal').classList.add('hidden'));
-
-            // Party Modal
-            document.getElementById('create-party-btn').addEventListener('click', createNewParty);
-            document.getElementById('join-party-form').addEventListener('submit', handleJoinParty);
-
-            // Copy Party ID
-            document.getElementById('copy-party-id').addEventListener('click', copyPartyIdToClipboard);
-        }
-
-        // --- FIREBASE & AUTHENTICATION ---
-        async function initFirebase() {
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        document.getElementById('user-id-display').textContent = userId;
-                        checkPartyState();
-                    } else {
-                        signIn();
-                    }
-                });
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                document.getElementById('auth-status').textContent = 'Error: Could not connect to campaign server.';
-            }
-        }
-        
-        async function signIn() {
-            try {
-                const initialToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                if (initialToken) {
-                    await signInWithCustomToken(auth, initialToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Authentication failed:", error);
-                document.getElementById('auth-status').textContent = 'Authentication failed.';
-            }
-        }
-        
-        function checkPartyState() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const partyIdFromUrl = urlParams.get('party');
-
-            if(partyIdFromUrl) {
-                joinParty(partyIdFromUrl);
-            } else {
-                 document.getElementById('party-modal').classList.remove('hidden');
-                 document.getElementById('party-modal').classList.add('flex');
-            }
-        }
-
-        function createNewParty() {
-            const newPartyId = generatePartyId();
-            joinParty(newPartyId);
-        }
-        
-        function handleJoinParty(e) {
-            e.preventDefault();
-            const partyIdToJoin = document.getElementById('join-party-id').value.trim();
-            if (partyIdToJoin) {
-                joinParty(partyIdToJoin);
-            }
-        }
-
-        function joinParty(newPartyId) {
-            partyId = newPartyId;
-            const url = new URL(window.location);
-            url.searchParams.set('party', partyId);
-            window.history.pushState({}, '', url);
-
-            document.getElementById('party-modal').classList.add('hidden');
-            document.getElementById('party-id-display').textContent = partyId;
-            document.getElementById('party-info').classList.remove('hidden');
-            document.getElementById('auth-status').querySelector('p').classList.add('hidden');
-
-            setupFirestoreListeners();
-        }
-
-        function setupFirestoreListeners() {
-            if (!partyId) return;
-
-            // Quests listener
-            const questsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'parties', partyId, 'quests');
-            unsubscribeQuests = onSnapshot(questsCollection, (snapshot) => {
-                const quests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderQuests(quests);
-            }, (error) => console.error("Error fetching quests:", error));
-            
-            // Characters listener
-            const charsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'parties', partyId, 'characters');
-            unsubscribeCharacters = onSnapshot(charsCollection, (snapshot) => {
-                const characters = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderCharacters(characters);
-            }, (error) => console.error("Error fetching characters:", error));
-        }
-        
-        function generatePartyId() {
-            return Math.random().toString(36).substring(2, 8).toUpperCase();
-        }
-
-        function copyPartyIdToClipboard() {
-            navigator.clipboard.writeText(partyId).then(() => {
-                alert('Party ID copied to clipboard!');
-            }).catch(err => {
-                console.error('Could not copy text: ', err);
-            });
-        }
-
-
-        // --- UI RENDERING ---
-
-        function renderMapMarkers() {
-            const container = document.getElementById('map-markers');
-            container.innerHTML = '';
-            mapLocations.forEach(loc => {
-                const marker = document.createElement('div');
-                marker.className = 'absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer map-dot';
-                marker.style.left = loc.x;
-                marker.style.top = loc.y;
-                marker.innerHTML = `<i data-lucide="map-pin" class="text-red-600 w-8 h-8"></i>`;
-                marker.addEventListener('click', () => {
-                    showLoreDetail(loc.name, `<p>${loc.description}</p>`);
-                });
-                container.appendChild(marker);
-            });
-            lucide.createIcons();
-        }
-
-        function renderLore() {
-            const container = document.getElementById('lore-list');
-            container.innerHTML = '';
-            loreData.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'bg-gray-800 bg-opacity-60 p-4 rounded-lg hover:bg-gray-700 cursor-pointer';
-                div.innerHTML = `<h3 class="text-xl font-medieval">${item.title}</h3>`;
-                div.addEventListener('click', () => showLoreDetail(item.title, item.content));
-                container.appendChild(div);
-            });
-        }
-        
-        function renderTimeline() {
-            const container = document.getElementById('timeline-list');
-            container.innerHTML = '';
-            timelineData.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'mb-8 relative';
-                div.innerHTML = `
-                    <div class="absolute w-4 h-4 bg-red-700 rounded-full -left-[42px] mt-1.5 border-2 border-white"></div>
-                    <p class="text-sm text-gray-400">${item.year}</p>
-                    <h3 class="text-xl font-medieval text-red-400">${item.event}</h3>
-                    <p class="text-gray-300">${item.description}</p>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        function renderQuests(quests) {
-            const container = document.getElementById('quest-list');
-            container.innerHTML = '';
-            if (quests.length === 0) {
-                container.innerHTML = '<p class="text-gray-400">No quests yet. Add one to begin the adventure!</p>';
-                return;
-            }
-            quests.sort((a,b) => (a.status === 'completed' || a.status === 'failed') ? 1 : -1)
-                  .forEach(quest => {
-                const statusColor = { active: 'border-yellow-400', completed: 'border-green-400', failed: 'border-red-400'}[quest.status];
-                const div = document.createElement('div');
-                div.className = `bg-gray-800 bg-opacity-70 p-4 rounded-lg border-l-4 ${statusColor}`;
-                div.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-xl font-medieval">${quest.title}</h3>
-                            <p class="text-gray-300 whitespace-pre-wrap">${quest.description}</p>
-                            <p class="text-sm mt-2 capitalize">Status: <span class="font-bold">${quest.status}</span></p>
-                        </div>
-                        <div class="flex space-x-2">
-                           <button class="edit-quest-btn text-blue-400 hover:text-blue-200" data-id="${quest.id}"><i data-lucide="edit"></i></button>
-                           <button class="delete-quest-btn text-red-500 hover:text-red-300" data-id="${quest.id}"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            
-            document.querySelectorAll('.edit-quest-btn').forEach(btn => btn.addEventListener('click', (e) => {
-                const id = e.currentTarget.dataset.id;
-                const quest = quests.find(q => q.id === id);
-                if (quest) showQuestModal(quest);
-            }));
-
-            document.querySelectorAll('.delete-quest-btn').forEach(btn => btn.addEventListener('click', async (e) => {
-                const id = e.currentTarget.dataset.id;
-                if (confirm('Are you sure you want to delete this quest?')) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'parties', partyId, 'quests', id));
-                }
-            }));
-            lucide.createIcons();
-        }
-
-        function renderCharacters(characters) {
-            const container = document.getElementById('character-list');
-            container.innerHTML = '';
-            if (characters.length === 0) {
-                container.innerHTML = '<p class="text-gray-400">No characters in the party yet. Add one to get started!</p>';
-                return;
-            }
-            characters.forEach(char => {
-                const div = document.createElement('div');
-                div.className = 'bg-parchment p-4 rounded-lg shadow-lg';
-                div.innerHTML = `
-                     <div class="flex justify-between items-start">
-                        <h3 class="text-2xl font-medieval">${char.name}</h3>
-                         <div class="flex space-x-2">
-                           <button class="edit-char-btn text-blue-600 hover:text-blue-800" data-id="${char.id}"><i data-lucide="edit"></i></button>
-                           <button class="delete-char-btn text-red-600 hover:text-red-800" data-id="${char.id}"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </div>
-                    <p class="text-amber-800 font-semibold">${char.player || 'NPC'}</p>
-                    <p class="text-amber-900">${char.class || 'No class specified'}</p>
-                    <hr class="border-amber-800 my-2">
-                    <p class="text-sm whitespace-pre-wrap text-amber-900">${char.notes || 'No notes.'}</p>
-                `;
-                 container.appendChild(div);
-            });
-            
-            document.querySelectorAll('.edit-char-btn').forEach(btn => btn.addEventListener('click', (e) => {
-                const id = e.currentTarget.dataset.id;
-                const char = characters.find(c => c.id === id);
-                if (char) showCharModal(char);
-            }));
-
-            document.querySelectorAll('.delete-char-btn').forEach(btn => btn.addEventListener('click', async (e) => {
-                const id = e.currentTarget.dataset.id;
-                if (confirm('Are you sure you want to remove this character?')) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'parties', partyId, 'characters', id));
-                }
-            }));
-
-            lucide.createIcons();
-        }
-        
-        // --- MODAL & FORM HANDLING ---
-        
-        function showLoreDetail(title, content) {
-            document.getElementById('lore-detail-title').textContent = title;
-            document.getElementById('lore-detail-content').innerHTML = content;
-            document.getElementById('lore-detail-modal').classList.remove('hidden');
-            document.getElementById('lore-detail-modal').classList.add('flex');
-        }
-
-        function showQuestModal(quest = null) {
-            const form = document.getElementById('quest-form');
-            form.reset();
-            document.getElementById('quest-modal-title').textContent = quest ? 'Edit Quest' : 'New Quest';
-            document.getElementById('quest-id').value = quest ? quest.id : '';
-            if (quest) {
-                document.getElementById('quest-title').value = quest.title;
-                document.getElementById('quest-description').value = quest.description;
-                document.getElementById('quest-status').value = quest.status;
-            }
-            document.getElementById('quest-modal').classList.remove('hidden');
-            document.getElementById('quest-modal').classList.add('flex');
-        }
-        
-        function hideQuestModal() {
-            document.getElementById('quest-modal').classList.add('hidden');
-        }
-
-        async function handleQuestFormSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('quest-id').value;
-            const questData = {
-                title: document.getElementById('quest-title').value,
-                description: document.getElementById('quest-description').value,
-                status: document.getElementById('quest-status').value
-            };
-            
-            try {
-                const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'parties', partyId, 'quests');
-                if (id) {
-                    await setDoc(doc(collectionRef, id), questData);
-                } else {
-                    await addDoc(collectionRef, questData);
-                }
-                hideQuestModal();
-            } catch (error) {
-                console.error("Error saving quest: ", error);
-                alert("Failed to save quest.");
-            }
-        }
-        
-         function showCharModal(char = null) {
-            const form = document.getElementById('char-form');
-            form.reset();
-            document.getElementById('char-modal-title').textContent = char ? 'Edit Character' : 'Add Character';
-            document.getElementById('char-id').value = char ? char.id : '';
-            if (char) {
-                document.getElementById('char-name').value = char.name;
-                document.getElementById('char-player').value = char.player;
-                document.getElementById('char-class').value = char.class;
-                document.getElementById('char-notes').value = char.notes;
-            }
-            document.getElementById('char-modal').classList.remove('hidden');
-            document.getElementById('char-modal').classList.add('flex');
-        }
-        
-        function hideCharModal() {
-            document.getElementById('char-modal').classList.add('hidden');
-        }
-        
-        async function handleCharFormSubmit(e) {
-            e.preventDefault();
-            const id = document.getElementById('char-id').value;
-            const charData = {
-                name: document.getElementById('char-name').value,
-                player: document.getElementById('char-player').value,
-                class: document.getElementById('char-class').value,
-                notes: document.getElementById('char-notes').value,
-            };
-            
-            try {
-                const collectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'parties', partyId, 'characters');
-                if (id) {
-                    await setDoc(doc(collectionRef, id), charData);
-                } else {
-                    await addDoc(collectionRef, charData);
-                }
-                hideCharModal();
-            } catch (error) {
-                console.error("Error saving character: ", error);
-                alert("Failed to save character.");
-            }
-        }
-
-    </script>
+      document.getElementById('character').textContent = `${name}, the ${trait} ${charClass}`;
+    }
+  </script>
 </body>
 </html>
