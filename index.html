@@ -1,92 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>D&D England 15th Century</title>
-  <style>
-    body {
-      font-family: 'Garamond', serif;
-      background: #f5f1e1;
-      color: #2f2f2f;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #5b3924;
-      color: #fff;
-      padding: 1rem;
-      text-align: center;
-    }
-    .container {
-      padding: 2rem;
-      max-width: 900px;
-      margin: auto;
-    }
-    .card {
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    h2 {
-      color: #3a1f0a;
-    }
-    button {
-      background: #5b3924;
-      color: #fff;
-      border: none;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    button:hover {
-      background: #8a5d3b;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Event-Driven Architecture Diagram</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e0f2fe; /* Light sky blue background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden; /* Prevent horizontal scroll on small screens */
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); /* Stronger, softer shadow */
+            padding: 3rem;
+            max-width: 1400px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid #cceeff; /* Subtle border */
+        }
+
+        h1 {
+            color: #1a365d; /* Deep blue */
+            margin-bottom: 1.5rem;
+            font-weight: 800; /* Extra bold */
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .subtitle {
+            color: #4a5568; /* Grayish blue */
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        .diagram-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .component-box {
+            background-color: #f0f9ff; /* Very light blue */
+            border: 2px solid #63b3ed; /* Brighter blue border */
+            border-radius: 1rem; /* Rounded corners */
+            padding: 1.5rem 2.5rem;
+            margin: 1.5rem;
+            width: 280px; /* Slightly wider boxes */
+            text-align: center;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            cursor: default;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            position: relative; /* For z-index in flex/grid */
+            z-index: 10;
+        }
+
+        .component-box:hover {
+            transform: translateY(-8px) scale(1.03); /* More pronounced lift */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2); /* Deeper shadow */
+        }
+
+        .component-title {
+            font-weight: 700;
+            color: #2b6cb0; /* Stronger blue */
+            margin-bottom: 0.75rem;
+            font-size: 1.15rem;
+        }
+
+        .component-description {
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+
+        .arrow {
+            fill: none;
+            stroke: #3182ce; /* Vibrant blue for arrows */
+            stroke-width: 4; /* Thicker arrows */
+            marker-end: url(#arrowhead);
+            /* animation: flow 3s linear infinite; */ /* Base animation, overridden by path-specific */
+            stroke-dasharray: 20 10; /* Dashed line for flow effect */
+        }
+
+        /* Keyframes for flow animation along paths */
+        @keyframes flow {
+            to {
+                stroke-dashoffset: -30;
+            }
+        }
+
+        .arrow.path-animation {
+            animation: flow 3s linear infinite;
+        }
+
+        .arrowhead {
+            fill: #3182ce;
+        }
+
+        .event-bus-box {
+            background-color: #d1e8ff; /* Medium light blue */
+            border: 3px dashed #3182ce; /* More prominent dashed border */
+            border-radius: 1.5rem; /* Very rounded */
+            padding: 2.5rem 4rem;
+            margin: 2.5rem;
+            min-width: 450px; /* Wider bus */
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .event-bus-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+        }
+
+        .event-bus-title {
+            font-weight: 800;
+            color: #1a365d;
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .event-bus-description {
+            font-size: 1.05rem;
+            color: #4a5568;
+            margin-bottom: 0.75rem;
+        }
+
+        .event-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #007bff; /* Bright blue */
+            background-color: #e0efff;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px; /* Pill shape */
+            border: 1px solid #8cc0ff;
+            margin: 0.4rem 0.6rem;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* SVG Specific Styling */
+        svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allows clicks to pass through to underlying elements */
+            z-index: 0; /* Behind boxes */
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .diagram-layout {
+                display: grid;
+                grid-template-columns: 1fr auto 1fr;
+                align-items: center;
+                gap: 30px; /* More space between grid items */
+            }
+
+            .producer-group, .consumer-group {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .diagram-container {
+                position: relative;
+                height: auto; /* Adjust height for grid layout */
+                display: contents; /* Allow children to be direct grid items */
+            }
+
+            svg {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Dungeons & Dragons: England 1450</h1>
-    <p>Create a character and begin your medieval journey</p>
-  </header>
-  <div class="container">
-    <div class="card">
-      <h2>Generate Character</h2>
-      <button onclick="generateCharacter()">Generate</button>
-      <p id="character"></p>
+    <div class="container">
+        <h1 class="text-3xl md:text-5xl">Event-Driven Architecture (EDA)</h1>
+        <p class="subtitle text-lg">
+            A flexible and powerful design for building scalable, real-time, and resilient systems.
+        </p>
+
+        <div class="diagram-layout relative">
+            <!-- SVG for lines and arrows -->
+            <svg class="absolute inset-0" id="diagram-svg">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="8" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7"></polygon>
+                    </marker>
+                </defs>
+                <!-- Lines will be drawn by JS and animated -->
+            </svg>
+
+            <!-- Event Producers Column -->
+            <div class="producer-group flex flex-col items-center z-10">
+                <div id="producer-a" class="component-box">
+                    <div class="component-title">Order Service (Producer)</div>
+                    <div class="component-description">Generates events for business actions.</div>
+                    <div class="event-label mt-3">OrderPlaced</div>
+                    <div class="event-label">PaymentFailed</div>
+                </div>
+                <div id="producer-b" class="component-box">
+                    <div class="component-title">User Service (Producer)</div>
+                    <div class="component-description">Publishes events related to user activities.</div>
+                    <div class="event-label mt-3">UserCreated</div>
+                    <div class="event-label">UserUpdated</div>
+                </div>
+            </div>
+
+            <!-- Event Bus/Broker -->
+            <div id="event-bus" class="event-bus-box z-10">
+                <div class="event-bus-title">Event Bus / Broker</div>
+                <div class="event-bus-description">
+                    (e.g., Apache Kafka, RabbitMQ, Google Pub/Sub, AWS SNS/SQS)<br>
+                    Reliably routes events from producers to consumers.
+                </div>
+            </div>
+
+            <!-- Event Consumers Column -->
+            <div class="consumer-group flex flex-col items-center z-10">
+                <div id="consumer-x" class="component-box">
+                    <div class="component-title">Inventory Service (Consumer)</div>
+                    <div class="component-description">Reacts to 'OrderPlaced' to update stock.</div>
+                </div>
+                <div id="consumer-y" class="component-box">
+                    <div class="component-title">Notification Service (Consumer)</div>
+                    <div class="component-description">Sends emails/SMS for 'OrderPlaced', 'UserCreated'.</div>
+                </div>
+                <div id="consumer-z" class="component-box">
+                    <div class="component-title">Analytics Service (Consumer)</div>
+                    <div class="component-description">Aggregates data from various events.</div>
+                </div>
+                <div id="consumer-w" class="component-box">
+                    <div class="component-title">Payment Service (Consumer)</div>
+                    <div class="component-description">Processes payments based on 'OrderPlaced'.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-left max-w-4xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-5">How It Works: The Event Flow</h2>
+            <ol class="list-decimal list-inside text-gray-700 space-y-3 text-lg leading-relaxed">
+                <li>**Event Generation:** A "Producer" service, like the **Order Service**, performs an action (e.g., a customer places an order). Instead of directly calling other services, it simply generates an immutable fact: an `OrderPlaced` event.</li>
+                <li>**Event Publishing:** This `OrderPlaced` event is then published to a dedicated channel (topic) on the central **Event Bus / Broker**. The producer doesn't care who receives it.</li>
+                <li>**Event Routing & Delivery:** The **Event Bus** reliably takes this event and distributes it to all "Consumer" services that have subscribed to the `OrderPlaced` event topic.</li>
+                <li>**Event Consumption & Reaction:**
+                    <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
+                        <li>The **Inventory Service** receives the `OrderPlaced` event and updates its stock levels.</li>
+                        <li>The **Notification Service** receives the `OrderPlaced` event and sends a confirmation email to the customer.</li>
+                        <li>The **Payment Service** also receives the `OrderPlaced` event and initiates the payment processing.</li>
+                        <li>The **Analytics Service** receives `OrderPlaced` (and other events like `UserCreated`) to build reports and insights.</li>
+                    </ul>
+                </li>
+                <li>**Loose Coupling & Scalability:** Each consumer acts independently. If the Inventory Service is down, the Notification Service can still send emails. New consumers (e.g., a "Loyalty Points Service") can be added later, simply by subscribing to existing events, without modifying any producers or other consumers.</li>
+            </ol>
+
+            <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-5">Why Choose EDA? Key Advantages</h2>
+            <ul class="list-disc list-inside text-gray-700 space-y-3 text-lg leading-relaxed">
+                <li>**Superior Decoupling:** Services are completely independent, reducing inter-dependencies and making systems easier to develop, deploy, and manage.</li>
+                <li>**Enhanced Scalability:** Individual services can be scaled up or down based on their specific load without impacting the entire system.</li>
+                <li>**Increased Resilience:** Failure of one service doesn't bring down others. Events can be retried or replayed, leading to more robust systems.</li>
+                <li>**Real-time Capabilities:** Naturally suited for applications requiring immediate responses to data changes, such as live dashboards, chat apps, and IoT.</li>
+                <li>**Greater Extensibility:** Easily add new features or integrations by simply creating new consumers that subscribe to existing events, without modifying existing code.</li>
+                <li>**Asynchronous Processing:** Improves overall system throughput and responsiveness by not blocking operations.</li>
+            </ul>
+        </div>
     </div>
 
-    <div class="card">
-      <h2>Map of the Realm</h2>
-      <p>A foggy, fractured England post-Hundred Years' War, teeming with rival houses and ancient myths.</p>
-    </div>
+    <script>
+        // Function to draw an SVG line between two elements
+        function drawLine(svg, fromElement, toElement, arrowId, strokeColor, animationClass) {
+            const fromRect = fromElement.getBoundingClientRect();
+            const toRect = toElement.getBoundingClientRect();
+            const svgRect = svg.getBoundingClientRect();
 
-    <div class="card">
-      <h2>Historical Factions</h2>
-      <ul>
-        <li>House Lancaster (Red Rose)</li>
-        <li>House York (White Rose)</li>
-        <li>Witch Covens of the Fens</li>
-        <li>Order of the Black Chalice</li>
-      </ul>
-    </div>
-  </div>
+            // Calculate center points relative to SVG container
+            const x1 = (fromRect.right - svgRect.left);
+            const y1 = (fromRect.top + fromRect.height / 2 - svgRect.top);
+            const x2 = (toRect.left - svgRect.left);
+            const y2 = (toRect.top + toRect.height / 2 - svgRect.top);
 
-  <script>
-    const names = ['Edric', 'Rowena', 'Thomasin', 'Geoffrey', 'Isolde', 'Aelric'];
-    const classes = ['Knight', 'Alchemist', 'Witch Hunter', 'Friar', 'Bowman', 'Spy'];
-    const traits = ['Pious', 'Cursed', 'Haunted by war', 'Seeks vengeance', 'Secretly royal', 'Devoted to science'];
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1);
+            line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2);
+            line.setAttribute('y2', y2);
+            line.setAttribute('stroke', strokeColor);
+            line.setAttribute('stroke-width', '4');
+            line.setAttribute('marker-end', `url(#${arrowId})`);
+            line.setAttribute('class', `arrow ${animationClass}`); // Add classes for styling and animation
+            svg.appendChild(line);
+        }
 
-    function generateCharacter() {
-      const name = names[Math.floor(Math.random() * names.length)];
-      const charClass = classes[Math.floor(Math.random() * classes.length)];
-      const trait = traits[Math.floor(Math.random() * traits.length)];
+        // Function to draw all lines
+        function drawAllLines() {
+            const svg = document.getElementById('diagram-svg');
+            // Clear existing lines to redraw on resize
+            // We only remove 'line' elements, preserving 'defs'
+            Array.from(svg.children).forEach(child => {
+                if (child.tagName === 'line') {
+                    svg.removeChild(child);
+                }
+            });
 
-      document.getElementById('character').textContent = `${name}, the ${trait} ${charClass}`;
-    }
-  </script>
+            const producerA = document.getElementById('producer-a');
+            const producerB = document.getElementById('producer-b');
+            const eventBus = document.getElementById('event-bus');
+            const consumerX = document.getElementById('consumer-x');
+            const consumerY = document.getElementById('consumer-y');
+            const consumerZ = document.getElementById('consumer-z');
+            const consumerW = document.getElementById('consumer-w'); // New consumer
+
+            // Draw lines from Producers to Event Bus
+            if (producerA && eventBus) drawLine(svg, producerA, eventBus, 'arrowhead', '#3182ce', 'path-animation');
+            if (producerB && eventBus) drawLine(svg, producerB, eventBus, 'arrowhead', '#3182ce', 'path-animation');
+
+            // Draw lines from Event Bus to Consumers
+            if (eventBus && consumerX) drawLine(svg, eventBus, consumerX, 'arrowhead', '#3182ce', 'path-animation');
+            if (eventBus && consumerY) drawLine(svg, eventBus, consumerY, 'arrowhead', '#3182ce', 'path-animation');
+            if (eventBus && consumerZ) drawLine(svg, eventBus, consumerZ, 'arrowhead', '#3182ce', 'path-animation');
+            if (eventBus && consumerW) drawLine(svg, eventBus, consumerW, 'arrowhead', '#3182ce', 'path-animation');
+        }
+
+        // Initial draw and redraw on resize
+        window.addEventListener('load', drawAllLines);
+        window.addEventListener('resize', drawAllLines);
+
+        // Add hover effects for boxes
+        document.querySelectorAll('.component-box, .event-bus-box').forEach(box => {
+            box.addEventListener('mouseenter', () => {
+                // Apply hover styles (already in CSS)
+            });
+            box.addEventListener('mouseleave', () => {
+                // Remove hover styles (already in CSS)
+            });
+        });
+
+    </script>
 </body>
 </html>
