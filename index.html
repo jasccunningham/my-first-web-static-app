@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Event-Driven Architecture Diagram</title>
+    <title>Jason's Event-Driven Architecture Diagram</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -264,34 +264,6 @@
                     <div class="component-description">Processes payments based on 'OrderPlaced'.</div>
                 </div>
             </div>
-        </div>
-
-        <div class="mt-12 text-left max-w-4xl mx-auto">
-            <h2 class="text-2xl font-bold text-gray-800 mb-5">How It Works: The Event Flow</h2>
-            <ol class="list-decimal list-inside text-gray-700 space-y-3 text-lg leading-relaxed">
-                <li>**Event Generation:** A "Producer" service, like the **Order Service**, performs an action (e.g., a customer places an order). Instead of directly calling other services, it simply generates an immutable fact: an `OrderPlaced` event.</li>
-                <li>**Event Publishing:** This `OrderPlaced` event is then published to a dedicated channel (topic) on the central **Event Bus / Broker**. The producer doesn't care who receives it.</li>
-                <li>**Event Routing & Delivery:** The **Event Bus** reliably takes this event and distributes it to all "Consumer" services that have subscribed to the `OrderPlaced` event topic.</li>
-                <li>**Event Consumption & Reaction:**
-                    <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
-                        <li>The **Inventory Service** receives the `OrderPlaced` event and updates its stock levels.</li>
-                        <li>The **Notification Service** receives the `OrderPlaced` event and sends a confirmation email to the customer.</li>
-                        <li>The **Payment Service** also receives the `OrderPlaced` event and initiates the payment processing.</li>
-                        <li>The **Analytics Service** receives `OrderPlaced` (and other events like `UserCreated`) to build reports and insights.</li>
-                    </ul>
-                </li>
-                <li>**Loose Coupling & Scalability:** Each consumer acts independently. If the Inventory Service is down, the Notification Service can still send emails. New consumers (e.g., a "Loyalty Points Service") can be added later, simply by subscribing to existing events, without modifying any producers or other consumers.</li>
-            </ol>
-
-            <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-5">Why Choose EDA? Key Advantages</h2>
-            <ul class="list-disc list-inside text-gray-700 space-y-3 text-lg leading-relaxed">
-                <li>**Superior Decoupling:** Services are completely independent, reducing inter-dependencies and making systems easier to develop, deploy, and manage.</li>
-                <li>**Enhanced Scalability:** Individual services can be scaled up or down based on their specific load without impacting the entire system.</li>
-                <li>**Increased Resilience:** Failure of one service doesn't bring down others. Events can be retried or replayed, leading to more robust systems.</li>
-                <li>**Real-time Capabilities:** Naturally suited for applications requiring immediate responses to data changes, such as live dashboards, chat apps, and IoT.</li>
-                <li>**Greater Extensibility:** Easily add new features or integrations by simply creating new consumers that subscribe to existing events, without modifying existing code.</li>
-                <li>**Asynchronous Processing:** Improves overall system throughput and responsiveness by not blocking operations.</li>
-            </ul>
         </div>
     </div>
 
